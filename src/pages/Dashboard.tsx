@@ -8,7 +8,6 @@ import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "@/config";
 import { Separator } from "@radix-ui/react-separator";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
 type Item = {
     id: string;
@@ -60,7 +59,18 @@ export default function Dashboard() {
                     </header>
                 </SidebarInset>
 
-
+                <div>
+                    <div>
+                        {items.map(item => (
+                            <div key={item.id}>
+                                <p>{item.id}</p>
+                                <p>{item.displayName}</p>
+                                <p>{item.email}</p>
+                                <p>{item.createdAt}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </SidebarProvider>
         </>
     )
