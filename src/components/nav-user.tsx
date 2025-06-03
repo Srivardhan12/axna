@@ -1,23 +1,18 @@
 "use client"
 
 import {
-    BadgeCheck,
-    Bell,
     ChevronsUpDown,
-    CreditCard,
     LogOut,
-    Sparkles,
+    User,
 } from "lucide-react"
 
 import {
     Avatar,
     AvatarFallback,
-    AvatarImage,
 } from "@/components/ui/avatar"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -29,25 +24,26 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "@/context/userContsxtProvider"
 
-export function NavUser({
-    user,
-}: {
-    user: {
-        name: string
-        email: string
-        avatar: string
-    }
-}) {
+export function NavUser() {
     const { isMobile } = useSidebar()
-    let userData: { username?: string; email?: string } = {};
-    try {
-        const stored = localStorage.getItem("user");
-        if (stored) {
-            userData = JSON.parse(stored);
-        }
-    } catch {
-        userData = {};
+    const navigate = useNavigate()
+    const { user, logout } = useUser()
+
+    // Don't render if no user
+    if (!user) {
+        return null
+    }
+
+    const handleLogout = () => {
+        logout()
+        navigate("/login")
+    }
+
+    const handleProfile = () => {
+        navigate("/profile")
     }
 
     return (
@@ -60,11 +56,13 @@ export function NavUser({
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarFallback className="rounded-lg uppercase">{userData.username ? userData.username[0] : ""}</AvatarFallback>
+                                <AvatarFallback className="rounded-lg uppercase">
+                                    {user.name ? user.name[0] : user.email[0]}
+                                </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{userData.username ?? ""}</span>
-                                <span className="truncate text-xs">{userData.email ?? ""}</span>
+                                <span className="truncate font-medium">{user.name || "kjdslfkds"}</span>
+                                <span className="truncate text-xs">{user.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
@@ -78,39 +76,43 @@ export function NavUser({
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                                    <AvatarFallback className="rounded-lg uppercase">
+                                        {user.name ? user.name[0] : user.email[0]}
+                                    </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
-                                    <span className="truncate font-medium">{user.name}</span>
+                                    <span className="truncate font-medium">{user.name || "User"}</span>
                                     <span className="truncate text-xs">{user.email}</span>
                                 </div>
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Sparkles />
+                        <DropdownMenuItem onClick={handleProfile}>
+                            <User />
+                            Profile
+                        </DropdownMenuItem>
+                        {user.plan === 'free' && (
+                            <DropdownMenuItem onClick={() => navigate("/upgrade")}>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                    <path d="M2 17l10 5 10-5" />
+                                    <path d="M2 12l10 5 10-5" />
+                                </svg>
                                 Upgrade to Pro
                             </DropdownMenuItem>
-                        </DropdownMenuGroup>
+                        )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell />
-                                Notifications
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>

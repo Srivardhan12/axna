@@ -13,28 +13,36 @@ import { Link, useNavigate } from "react-router-dom"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react"
 import { app } from "@/config"
+import { useUser } from "@/context/userContsxtProvider"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentPropsWithoutRef<"div">) {
 
-    const [user, setUser] = useState({ id: "", username: "", email: "", password: "" })
+    const [userLogin, setUserLogin] = useState({ id: "", username: "", email: "", password: "" })
     const [disableButton, setDisableButton] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
     const auth = getAuth(app);
     const navigate = useNavigate();
+    const { updateUser } = useUser();
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
         setDisableButton(true)
-        console.log("User data not:", user)
-        signInWithEmailAndPassword(auth, user.email, user.password)
+        console.log("User data not:", userLogin)
+        signInWithEmailAndPassword(auth, userLogin.email, userLogin.password)
             .then(async (userCredential) => {
                 const createdUser = userCredential.user;
                 console.log("User signed up:", createdUser);
-                setUser({ ...user, id: createdUser.uid, username: createdUser.displayName || "" })
-                localStorage.setItem("user", JSON.stringify({ ...user, id: createdUser.uid, username: createdUser.displayName || "" }))
+                updateUser({
+                    uid: createdUser.uid,
+                    email: createdUser.email || "",
+                    name: createdUser.displayName || "",
+                    plan: "free",
+                    spacesUsed: 0,
+                    createdAt: new Date().toISOString().split("T")[0], // Only date part
+                });
                 navigate("/dashboard")
                 setDisableButton(false);
             })
@@ -64,14 +72,14 @@ export function LoginForm({
                                         type="email"
                                         placeholder="axna@example.com"
                                         required
-                                        onChange={(e) => { setUser({ ...user, email: e.target.value }); setErrorMessage(""); }}
+                                        onChange={(e) => { setUserLogin({ ...userLogin, email: e.target.value }); setErrorMessage(""); }}
                                     />
                                 </div>
                                 <div className="grid gap-2">
                                     <div className="flex items-center">
                                         <Label htmlFor="password">Password</Label>
                                     </div>
-                                    <Input id="password" type="password" required onChange={(e) => { setUser({ ...user, password: e.target.value }); setErrorMessage("") }} />
+                                    <Input id="password" type="password" required onChange={(e) => { setUserLogin({ ...userLogin, password: e.target.value }); setErrorMessage("") }} />
                                 </div>
                                 {errorMessage ? <span className="text-red-500 font-medium text-sm">{errorMessage}</span> : null}
                                 <Button variant="outline" type="submit" className="w-full cursor-pointer" disabled={disableButton}>

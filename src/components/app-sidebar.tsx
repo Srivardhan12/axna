@@ -1,13 +1,13 @@
-import * as React from "react"
+import { useState } from "react";
 import {
     AudioWaveform,
     Command,
     GalleryVerticalEnd,
     SquareTerminal,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
     Sidebar,
     SidebarContent,
@@ -17,7 +17,9 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/sidebar"
+    SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { Link } from "react-router-dom";
 
 // This is sample data.
 const data = {
@@ -45,17 +47,29 @@ const data = {
     ],
     navMain: [
         {
-            title: "Playground",
+            title: "Getting Started",
+            url: "#",
+            icon: AudioWaveform,
+            isActive: true,
+            items: [
+                {
+                    title: "About AXNA",
+                    url: "#",
+                },
+                {
+                    title: "How to use AXNA",
+                    url: "#",
+                },
+            ],
+        },
+        {
+            title: "Others",
             url: "#",
             icon: SquareTerminal,
             isActive: true,
             items: [
                 {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
+                    title: "Profile",
                     url: "#",
                 },
                 {
@@ -63,24 +77,33 @@ const data = {
                     url: "#",
                 },
             ],
-        }
-    ]
-}
+        },
+    ],
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+    const [sidebarclouser, setSidebarclouser] = useState(false);
+
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
-                    <SidebarMenuItem>
+                    <SidebarMenuItem
+                        className="flex items-center justify-between"
+                        style={{ flexDirection: sidebarclouser ? "column" : "row" }}
+                    >
                         <SidebarMenuButton
                             asChild
                             className="data-[slot=sidebar-menu-button]:!p-1.5"
                         >
-                            <a href="#">
+                            <Link to="/">
                                 <span className="text-base font-bold">AXNA</span>
-                            </a>
+                            </Link>
                         </SidebarMenuButton>
+                        <SidebarTrigger
+                            onClick={() => setSidebarclouser(!sidebarclouser)}
+                            className="cursor-pointer border mt-1"
+                        />
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
@@ -88,9 +111,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <NavMain items={data.navMain} />
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={data.user} />
+                <NavUser />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>
-    )
+    );
 }

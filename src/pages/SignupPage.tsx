@@ -50,7 +50,6 @@ export function SignupForm({
                     return;
                 }
                 setDisableButton(false)
-                localStorage.setItem("user", JSON.stringify({ ...user, id: createdUser.uid }))
                 navigate("/login")
             })
             .catch(() => {
