@@ -14,6 +14,9 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react"
 import { app } from "@/config"
 import { useUser } from "@/context/userContsxtProvider"
+import { Eye, EyeClosed } from "lucide-react"
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/config"
 
 export function LoginForm({
     className,
@@ -23,33 +26,46 @@ export function LoginForm({
     const [userLogin, setUserLogin] = useState({ id: "", username: "", email: "", password: "" })
     const [disableButton, setDisableButton] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const auth = getAuth(app);
     const navigate = useNavigate();
-    const { updateUser } = useUser();
+    const { login } = useUser();
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        setDisableButton(true)
-        console.log("User data not:", userLogin)
-        signInWithEmailAndPassword(auth, userLogin.email, userLogin.password)
-            .then(async (userCredential) => {
-                const createdUser = userCredential.user;
-                console.log("User signed up:", createdUser);
-                updateUser({
-                    uid: createdUser.uid,
-                    email: createdUser.email || "",
-                    name: createdUser.displayName || "",
-                    plan: "free",
-                    spacesUsed: 0,
-                    createdAt: new Date().toISOString().split("T")[0], // Only date part
-                });
-                navigate("/dashboard")
-                setDisableButton(false);
-            })
-            .catch(() => {
-                setErrorMessage("Invalid email or password")
-                setDisableButton(false)
-            })
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setDisableButton(true);
+        setErrorMessage("");
+        try {
+            const userCredential = await signInWithEmailAndPassword(auth, userLogin.email, userLogin.password);
+            const createdUser = userCredential.user;
+            // Fetch user data from Firestore
+            const userDocRef = doc(db, "users", createdUser.uid);
+            const userDocSnap = await getDoc(userDocRef);
+            let userData = {
+                uid: createdUser.uid,
+                email: createdUser.email || "",
+                name: createdUser.displayName || "",
+                plan: "free" as "free" | "pro",
+                spacesUsed: 0,
+                createdAt: new Date().toISOString(),
+            };
+            if (userDocSnap.exists()) {
+                const data = userDocSnap.data();
+                userData = {
+                    ...userData,
+                    name: data.name || createdUser.displayName || "",
+                    plan: data.plan === "pro" ? "pro" : "free",
+                    spacesUsed: data.spacesUsed,
+                    createdAt: data.createdAt,
+                };
+            }
+            login(userData);
+            navigate("/dashboard");
+        } catch {
+            setErrorMessage("Invalid email or password");
+        } finally {
+            setDisableButton(false);
+        }
     }
 
     return (
@@ -79,7 +95,21 @@ export function LoginForm({
                                     <div className="flex items-center">
                                         <Label htmlFor="password">Password</Label>
                                     </div>
-                                    <Input id="password" type="password" required onChange={(e) => { setUserLogin({ ...userLogin, password: e.target.value }); setErrorMessage("") }} />
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            onChange={(e) => { setUserLogin({ ...userLogin, password: e.target.value }); setErrorMessage("") }}
+                                            className="pr-10"
+                                        />
+                                        <span
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                            style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', padding: '0 10px' }}
+                                        >
+                                            {showPassword ? <EyeClosed /> : <Eye />}
+                                        </span>
+                                    </div>
                                 </div>
                                 {errorMessage ? <span className="text-red-500 font-medium text-sm">{errorMessage}</span> : null}
                                 <Button variant="outline" type="submit" className="w-full cursor-pointer" disabled={disableButton}>

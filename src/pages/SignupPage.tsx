@@ -14,6 +14,7 @@ import { useState } from "react"
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { app, db } from "@/config"
 import { doc, setDoc } from "firebase/firestore"
+import { Eye, EyeClosed } from "lucide-react"
 
 export function SignupForm({
     className,
@@ -22,6 +23,7 @@ export function SignupForm({
     const [user, setUser] = useState({ id: "", username: "", email: "", password: "" })
     const [disableButton, setDisableButton] = useState(false)
     const [errorMessage, setErrorMessage] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
     const auth = getAuth(app);
     const navigate = useNavigate();
 
@@ -34,11 +36,13 @@ export function SignupForm({
             .then(async (userCredential) => {
                 const createdUser = userCredential.user;
                 try {
-                    await setDoc(doc(db, "users", user.username), {
+                    await setDoc(doc(db, "users", createdUser.uid), {
                         name: user.username,
                         email: user.email,
                         id: createdUser.uid,
                         createdAt: new Date().toISOString().split("T")[0],
+                        plan: "free",
+                        spacesUsed: 0,
                     });
                     await updateProfile(createdUser, {
                         displayName: user.username,
@@ -95,7 +99,21 @@ export function SignupForm({
                                     <div className="flex items-center">
                                         <Label htmlFor="password">Password</Label>
                                     </div>
-                                    <Input id="password" type="password" required onChange={(e) => setUser({ ...user, password: e.target.value })} />
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            onChange={(e) => setUser({ ...user, password: e.target.value })}
+                                            className="pr-10"
+                                        />
+                                        <span
+                                            onClick={() => setShowPassword((prev) => !prev)}
+                                            style={{ position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer', padding: '0 10px' }}
+                                        >
+                                            {showPassword ? <EyeClosed /> : <Eye />}
+                                        </span>
+                                    </div>
                                     {errorMessage ? <span className="text-red-500 font-medium text-sm">{errorMessage}</span> : null}
                                 </div>
                                 <Button variant="outline" type="submit" className="w-full cursor-pointer" disabled={disableButton}>

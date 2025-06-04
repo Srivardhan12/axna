@@ -1,8 +1,7 @@
 import { useState } from "react";
 import {
     AudioWaveform,
-    Command,
-    GalleryVerticalEnd,
+    Notebook,
     SquareTerminal,
 } from "lucide-react";
 
@@ -28,23 +27,6 @@ const data = {
         email: "m@example.com",
         avatar: "/avatars/shadcn.jpg",
     },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
     navMain: [
         {
             title: "Getting Started",
@@ -63,10 +45,23 @@ const data = {
             ],
         },
         {
+            title: "AXNA",
+            url: "",
+            icon: Notebook,
+            isActive: true,
+            items: [
+                {
+                    title: "Spaces",
+                    url: "#",
+                },
+
+            ],
+        },
+        {
             title: "Others",
             url: "#",
             icon: SquareTerminal,
-            isActive: true,
+            isActive: false,
             items: [
                 {
                     title: "Profile",
@@ -88,14 +83,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
                 <SidebarMenu>
-                    <SidebarMenuItem
-                        className="flex items-center justify-between"
-                        style={{ flexDirection: sidebarclouser ? "column" : "row" }}
-                    >
-                        <SidebarMenuButton
-                            asChild
-                            className="data-[slot=sidebar-menu-button]:!p-1.5"
-                        >
+                    <SidebarMenuItem className="flex items-center justify-between" style={{ flexDirection: sidebarclouser ? "column" : "row" }}>
+                        <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5" >
                             <Link to="/">
                                 <span className="text-base font-bold">AXNA</span>
                             </Link>

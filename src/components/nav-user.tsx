@@ -32,7 +32,6 @@ export function NavUser() {
     const navigate = useNavigate()
     const { user, logout } = useUser()
 
-    // Don't render if no user
     if (!user) {
         return null
     }
@@ -61,7 +60,7 @@ export function NavUser() {
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                <span className="truncate font-medium">{user.name || "kjdslfkds"}</span>
+                                <span className="truncate font-medium">{user.name || "User"}</span>
                                 <span className="truncate text-xs">{user.email}</span>
                             </div>
                             <ChevronsUpDown className="ml-auto size-4" />

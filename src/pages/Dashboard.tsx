@@ -3,20 +3,24 @@ import {
     SidebarInset,
     SidebarProvider,
 } from "@/components/ui/sidebar"
-import { useUser } from "@/context/userContsxtProvider";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
-    const { user } = useUser();
+    const navigate = useNavigate();
+    useEffect(() => {
+        const authUser = localStorage.getItem('user');
+        if (!authUser) {
+            navigate("/login");
+        }
+    }, [navigate]);
+
     return (
         <>
             <SidebarProvider>
                 <AppSidebar />
                 <SidebarInset>
-                    <div className="p-4 border-b">
-                        <h2 className="text-lg font-semibold">{user ? user.name : ""}</h2>
-                        <p className="text-sm text-gray-500">{user ? user.email : ""}</p>
-                        <p className="text-xs text-gray-400">Created at: {user ? user.createdAt : ""}</p>
-                    </div>
+                    <Outlet />
                 </SidebarInset>
             </SidebarProvider>
         </>

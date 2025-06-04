@@ -5,7 +5,7 @@ interface User {
     email: string;
     name: string;
     plan?: 'free' | 'pro';
-    spacesUsed?: number;
+    spacesUsed: number;
     createdAt?: string;
 }
 
@@ -15,6 +15,8 @@ interface UserContextType {
     login: (userData: User) => void;
     logout: () => void;
     isLoggedIn: boolean;
+    globalSpaceName: string | null;
+    setGlobalSpaceName: (name: string | null) => void;
 }
 
 interface UserProviderProps {
@@ -24,6 +26,7 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+    const [globalSpaceName, setGlobalSpaceName] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(() => {
         try {
             const savedUser = localStorage.getItem('user');
@@ -54,6 +57,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         updateUser(null);
     };
 
+
     useEffect(() => {
         try {
             if (user) {
@@ -71,27 +75,27 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         updateUser,
         login,
         logout,
-        isLoggedIn: !!user
+        isLoggedIn: !!user,
+        globalSpaceName,
+        setGlobalSpaceName
     };
 
     return (
-        <UserContext.Provider value={value}>
+        <UserContext.Provider value={value} >
             {children}
-        </UserContext.Provider>
+        </UserContext.Provider >
     );
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useUser = (): UserContextType => {
     const context = useContext(UserContext);
-
     if (!context) {
         throw new Error('useUser must be used within a UserProvider');
     }
-
     return context;
 };
 
-// Export the context and User type (if needed elsewhere)
+
 export { UserContext };
 export type { User };
