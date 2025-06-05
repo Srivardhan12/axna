@@ -15,8 +15,6 @@ interface UserContextType {
     login: (userData: User) => void;
     logout: () => void;
     isLoggedIn: boolean;
-    globalSpaceName: string | null;
-    setGlobalSpaceName: (name: string | null) => void;
 }
 
 interface UserProviderProps {
@@ -26,7 +24,6 @@ interface UserProviderProps {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-    const [globalSpaceName, setGlobalSpaceName] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(() => {
         try {
             const savedUser = localStorage.getItem('user');
@@ -76,8 +73,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         login,
         logout,
         isLoggedIn: !!user,
-        globalSpaceName,
-        setGlobalSpaceName
     };
 
     return (

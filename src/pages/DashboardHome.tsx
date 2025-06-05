@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { useUser } from "@/context/userContsxtProvider"
+import { usePDF } from "@/context/pdfContextProvider"
 
 import {
     Dialog,
@@ -17,7 +18,8 @@ import { useNavigate } from "react-router-dom";
 
 export default function DashboardHome() {
     const navigate = useNavigate();
-    const { user, setGlobalSpaceName } = useUser();
+    const { user } = useUser();
+    const { setGlobalSpaceName } = usePDF();
     const [spaceName, setSpaceName] = useState("")
     const createNewSpace = () => {
         setGlobalSpaceName(spaceName);
@@ -29,6 +31,9 @@ export default function DashboardHome() {
             <header className="">
                 <div className="flex justify-end px-3 py-3 w-full border-b-2">
                     <Dialog>
+                        {/* <DialogTrigger disabled={user?.spacesUsed && user.spacesUsed >= 6 || false}>
+                            <Button className="bg-blue-600 hover:bg-blue-700 rounded text-white" disabled={user?.spacesUsed && user.spacesUsed >= 6 || false}><Plus />New Space</Button>
+                        </DialogTrigger> */}
                         <DialogTrigger>
                             <Button className="bg-blue-600 hover:bg-blue-700 rounded text-white"><Plus />New Space</Button>
                         </DialogTrigger>
@@ -48,7 +53,7 @@ export default function DashboardHome() {
                         </DialogContent>
                     </Dialog>
                 </div>
-            </header>
+            </header >
             <div className="mx-5">
                 <div className="py-5 border-b-1">
                     <h2 className="text-3xl font-semibold">Spaces</h2>
@@ -58,6 +63,6 @@ export default function DashboardHome() {
                     <h2 className="text-2xl font-semibold">Created Spaces {user?.spacesUsed ? user.spacesUsed / 2 : 0} / 3</h2>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
