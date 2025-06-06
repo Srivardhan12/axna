@@ -15,7 +15,7 @@ json{
   "summary": "Your concise summary here..."
 }`;
 
-const quizPrompt = ({ difficulty }: { difficulty: string }) => {
+const quizPrompt = ({ difficulty, pdfExtractedText }: { difficulty: string; pdfExtractedText: string }) => {
     return `# Quiz Generation Prompt
         You are an expert educational assessment creator specialized in developing high-quality multiple-choice questions.
 
@@ -50,7 +50,10 @@ const quizPrompt = ({ difficulty }: { difficulty: string }) => {
                     "explanation": "Detailed explanation of why this answer is correct and why others are incorrect."
                 }
             ]
-        }`
+        }
+            **Difficulty Level:** ${difficulty}
+            **Number of Questions:** 10
+            **Text for Context:** ${pdfExtractedText}`;
 };
 
 const flashcardsPrompt = ({ difficulty }: { difficulty: string }) => {

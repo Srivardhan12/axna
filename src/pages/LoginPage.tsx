@@ -13,7 +13,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react"
 import { app } from "@/config"
-import { useUser } from "@/context/userContsxtProvider"
+import { useUser } from "@/context/userContextProvider"
 import { Eye, EyeClosed } from "lucide-react"
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/config"

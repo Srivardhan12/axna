@@ -23,7 +23,13 @@ const PDFContext = createContext<PDFContextType | null>(null);
 const getInitialState = <T,>(key: string, defaultValue: T): T => {
     if (typeof window !== 'undefined') {
         const storedValue = localStorage.getItem(key);
-        return storedValue ? JSON.parse(storedValue) : defaultValue;
+        try {
+            return storedValue ? JSON.parse(storedValue) : defaultValue;
+        } catch {
+            // If JSON.parse fails (e.g., invalid value), remove the corrupted value and return default
+            localStorage.removeItem(key);
+            return defaultValue;
+        }
     }
     return defaultValue;
 };

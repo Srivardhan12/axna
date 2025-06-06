@@ -25,7 +25,7 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router-dom"
-import { useUser } from "@/context/userContsxtProvider"
+import { useUser } from "@/context/userContextProvider"
 
 export function NavUser() {
     const { isMobile } = useSidebar()

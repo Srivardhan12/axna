@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-import { useUser } from "@/context/userContsxtProvider"
+import { useUser } from "@/context/userContextProvider"
 import { usePDF } from "@/context/pdfContextProvider"
 
 import {

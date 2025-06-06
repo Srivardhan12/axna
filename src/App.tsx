@@ -8,7 +8,10 @@ import Generate from "./pages/Generate"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { PDFProvider } from "./context/pdfContextProvider"
 import { ThemeProvider } from "./components/theme-provider"
-import { UserProvider } from "./context/userContsxtProvider"
+import { UserProvider } from "./context/userContextProvider"
+import Quiz from "./pages/Quiz"
+import Flashcards from "./pages/Flashcards"
+import Summary from "./pages/Summary"
 
 function App() {
   return (
@@ -16,7 +19,7 @@ function App() {
       <PDFProvider>
         <BrowserRouter>
           <div>
-            <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
+            <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
@@ -25,6 +28,9 @@ function App() {
                   <Route index element={<DashboardHome />} />
                   <Route path="space" element={<Space />} />
                   <Route path="generate" element={<Generate />} />
+                  <Route path="quiz" element={<Quiz />} />
+                  <Route path="flashcards" element={<Flashcards />} />
+                  <Route path="summary" element={<Summary />} />
                 </Route>
               </Routes>
             </ThemeProvider>
