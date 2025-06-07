@@ -1,5 +1,47 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Arima:wght@100..700&family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
+
+.arima {
+  font-family: "Arima", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.arima-semibold {
+  font-family: "Arima", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+.arima-bold {
+  font-family: "Arima", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+.karla {
+  font-family: "Karla", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.karla-semibold {
+  font-family: "Karla", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  font-style: normal;
+}
+.karla-bold {
+  font-family: "Karla", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 700;
+  font-style: normal;
+}
 
 @custom-variant dark (&:is(.dark *));
 
