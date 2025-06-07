@@ -259,7 +259,7 @@ export default function PDFExtractor() {
             <Button
               className="py-2 px-4 rounded w-full bg-blue-500 text-gray-50 hover:bg-blue-600 transition-colors mt-2 cursor-pointer"
               onClick={() => {
-                navigate('/quiz')
+                navigate('/dashboard/quiz')
               }}>
               Generate Quiz
             </Button>
