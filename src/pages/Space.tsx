@@ -20,7 +20,7 @@ interface ExtractedPage {
 }
 
 export default function PDFExtractor() {
-  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [, setUploadSuccess] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pdfLoaded, setPdfLoaded] = useState(false);
@@ -28,24 +28,6 @@ export default function PDFExtractor() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { pdfExtractedText, setPdfExtractedText } = usePDF();
   const navigate = useNavigate();
-
-  const generateButtons = [
-    {
-      title: "Generate Quiz",
-      description: "Generate 10 Quiz questions based on the extracted text from the PDF.",
-      route: "quiz",
-    },
-    {
-      title: "Generate Flashcards",
-      description: "Ge 10 flashcards from the extracted text to help with memorization.",
-      route: "flashcards",
-    },
-    {
-      title: "Generate Summary",
-      description: "Generate a concise summary of the extracted text from the PDF.",
-      route: "summary",
-    },
-  ]
 
   const [extractedText, setExtractedText] = useState<ExtractedPage[]>(() => {
     if (!pdfExtractedText) return [];
@@ -232,7 +214,6 @@ export default function PDFExtractor() {
               )}
             </div>
             <input
-              disabled={uploadSuccess}
               id="dropzone-file"
               type="file"
               className="hidden"
@@ -272,25 +253,17 @@ export default function PDFExtractor() {
         </div>
       )}
       {extractedText.length > 0 && (<div>
-        <div className="flex gap-1 mt-3 md:sm:flex-row flex-col">
-          {generateButtons.map((button, index) => (
-            <div key={index} className="border-1 p-4 rounded">
-              <p className="text-gray-600 mt-2">{button.description}</p>
-              <Button
-                className="py-2 px-4 rounded w-full bg-blue-500 text-gray-50 hover:bg-blue-600 transition-colors mt-2 cursor-pointer"
-                onClick={() => {
-                  if (button.route === "quiz") {
-                    navigate(`/dashboard/quiz`);
-                  } else if (button.route === "flashcards") {
-                    navigate(`/dashboard/flashcards`);
-                  } else if (button.route === "summary") {
-                    navigate(`/dashboard/summary`);
-                  }
-                }}>
-                {button.title}
-              </Button>
-            </div>
-          ))}
+        <div className="flex gap-1 mt-3 md:sm:flex-row flex-col w-1/4">
+          <div className="border-1 p-4 rounded">
+            <p className="text-gray-600 mt-2">Generate 10 Quiz questions based on the extracted text from the PDF.</p>
+            <Button
+              className="py-2 px-4 rounded w-full bg-blue-500 text-gray-50 hover:bg-blue-600 transition-colors mt-2 cursor-pointer"
+              onClick={() => {
+                navigate('/quiz')
+              }}>
+              Generate Quiz
+            </Button>
+          </div>
         </div>
       </div>)
       }

@@ -2,7 +2,7 @@ import LoginPage from "./auth/Login"
 import SignupPage from "./auth/Signup"
 import LandingPage from "./pages/LandingPage"
 import Dashboard from "./pages/Dashboard"
-import DashboardHome from "./pages/DashboardHome"
+// import DashboardHome from "./pages/DashboardHome"
 import Space from "./pages/Space"
 import Generate from "./pages/Generate"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
@@ -25,8 +25,8 @@ function App() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/dashboard" element={<Dashboard />} >
-                  <Route index element={<DashboardHome />} />
-                  <Route path="space" element={<Space />} />
+                  {/* <Route index element={<DashboardHome />} /> */}
+                  <Route index element={<Space />} />
                   <Route path="generate" element={<Generate />} />
                   <Route path="quiz" element={<Quiz />} />
                   <Route path="flashcards" element={<Flashcards />} />
