@@ -73,6 +73,7 @@ export default function PDFExtractor() {
 
   useEffect(() => {
     if (!window.pdfjsLib) {
+      localStorage.setItem('pdfExtractedText', "");
       const script = document.createElement('script');
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
       script.onload = () => {
@@ -84,6 +85,9 @@ export default function PDFExtractor() {
         setError('Failed to load PDF processing library');
       };
       document.head.appendChild(script);
+      return () => {
+        localStorage.removeItem('pdfExtractedText');
+      }
     } else {
       setPdfLoaded(true);
     }
@@ -287,7 +291,6 @@ export default function PDFExtractor() {
               </Button>
             </div>
           ))}
-          <Button onClick={() => { localStorage.setItem("pdfExtractedText", "") }}>Clear PDF</Button>
         </div>
       </div>)
       }

@@ -1,10 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { quizPrompt } from "@/prompts/prompts";
-import { useUser } from "@/context/userContextProvider"; // Fixed typo
+import { useUser } from "@/context/userContextProvider";
 import { usePDF } from "@/context/pdfContextProvider";
 
-// UI Components
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -19,7 +18,6 @@ import {
   SelectValue
 } from "@/components/ui/select";
 
-// Icons
 import {
   Loader2,
   CheckCircle,
@@ -32,7 +30,6 @@ import {
   Play
 } from "lucide-react";
 
-// Types
 interface QuizQuestion {
   id: string;
   question: string;
@@ -57,8 +54,8 @@ interface QuizState {
 type DifficultyLevel = 'easy' | 'medium' | 'hard';
 type QuizStatus = 'idle' | 'loading' | 'ready' | 'completed' | 'error';
 
-// Custom hook for quiz logic
 const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
+  const { pdfExtractedText } = usePDF()
   const [status, setStatus] = useState<QuizStatus>('idle');
   const [error, setError] = useState<string | null>(null);
   const [quizState, setQuizState] = useState<QuizState>({
@@ -74,7 +71,6 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
   const generateQuiz = useCallback(async () => {
     if (!pdfText) return;
 
-    // Cancel any existing request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
     }
@@ -85,56 +81,143 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
     setError(null);
 
     try {
+      const GEMINI_API_KEY = import.meta.env.VITE_LLM_API_KEY || "YOUR_GEMINI_API_KEY_HERE";
+
+      if (!GEMINI_API_KEY || GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+        throw new Error("Gemini API key is not configured. Please set REACT_APP_GEMINI_API_KEY in your environment variables.");
+      }
+
+      const maxTextLength = 30000;
+      const truncatedText = (pdfExtractedText || "").length > maxTextLength
+        ? (pdfExtractedText || "").substring(0, maxTextLength) + "..."
+        : (pdfExtractedText || "");
+
       const prompt = quizPrompt({
         difficulty,
-        pdfExtractedText: pdfText
+        pdfExtractedText: truncatedText
       });
 
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer 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`,
-          "HTTP-Referer": window.location.href || "https://claude.ai",
-          "X-Title": "Axna PDF Quiz Generator",
+      const requestBody = {
+        contents: [
+          {
+            parts: [
+              {
+                text: `${prompt}\n\nIMPORTANT: Respond with ONLY valid JSON in this exact format:`
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.8,
+          maxOutputTokens: 4000,
+          topP: 0.8,
+          topK: 40
         },
-        body: JSON.stringify({
-          model: "openai/gpt-4o-mini",
-          messages: [{ role: "user", content: prompt }],
-          temperature: 0.7,
-          max_tokens: 1500,
-        }),
-        signal: abortControllerRef.current.signal
-      });
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      };
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+          signal: abortControllerRef.current.signal
+        }
+      );
 
       if (!response.ok) {
-        throw new Error(`Failed to generate quiz: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.error?.message) {
+            errorMessage = `API Error: ${errorData.error.message}`;
+          }
+        } catch {
+          // intentionally empty
+        }
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
-      const quizContent = data.choices[0].message.content;
 
-      // Parse the JSON response
+      const candidate = data.candidates?.[0];
+      if (!candidate) {
+        throw new Error('No candidates in API response');
+      }
+
+      if (candidate.finishReason === 'SAFETY') {
+        throw new Error('Content was blocked by safety filters. Try with different content or adjust difficulty.');
+      }
+
+      const quizContent = candidate.content?.parts?.[0]?.text;
+      if (!quizContent) {
+        throw new Error('No content received from Gemini API');
+      }
+
       let parsedQuiz: { quiz: Omit<QuizQuestion, 'id'>[] };
+
       try {
-        parsedQuiz = JSON.parse(quizContent);
-      } catch {
-        // If direct parsing fails, try to extract JSON from the response
-        const jsonMatch = quizContent.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          parsedQuiz = JSON.parse(jsonMatch[0]);
-        } else {
-          throw new Error('Invalid JSON response from API');
+        let cleanContent = quizContent.trim();
+        cleanContent = cleanContent.replace(/```json\s*|\s*```/g, '');
+        const jsonStart = cleanContent.indexOf('{');
+        const jsonEnd = cleanContent.lastIndexOf('}');
+        if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+          cleanContent = cleanContent.substring(jsonStart, jsonEnd + 1);
         }
+        parsedQuiz = JSON.parse(cleanContent);
+      } catch {
+        throw new Error('Failed to parse quiz data. The AI response was not in valid JSON format.');
       }
 
       if (!parsedQuiz.quiz || !Array.isArray(parsedQuiz.quiz)) {
-        throw new Error('Invalid quiz format received');
+        throw new Error('Invalid quiz format: Missing or invalid quiz array');
       }
 
-      // Add IDs to questions for better tracking
-      const questionsWithIds = parsedQuiz.quiz.map((q: Omit<QuizQuestion, 'id'>, index: number) => ({
+      if (parsedQuiz.quiz.length === 0) {
+        throw new Error('No questions generated. Please try again.');
+      }
+
+      const validQuestions = parsedQuiz.quiz.filter((q) => {
+        const isValid = (
+          q.question && typeof q.question === 'string' &&
+          q.answerOptions &&
+          typeof q.answerOptions.A === 'string' &&
+          typeof q.answerOptions.B === 'string' &&
+          typeof q.answerOptions.C === 'string' &&
+          typeof q.answerOptions.D === 'string' &&
+          ['A', 'B', 'C', 'D'].includes(q.correctAnswer) &&
+          q.explanation && typeof q.explanation === 'string'
+        );
+        return isValid;
+      });
+
+      if (validQuestions.length === 0) {
+        throw new Error('No valid questions generated. Please try again.');
+      }
+
+      const questionsWithIds = validQuestions.map((q, index) => ({
         ...q,
         id: `q_${index}_${Date.now()}`
       }));
@@ -150,14 +233,13 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
       setStatus('ready');
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
-        return; // Request was cancelled, ignore
+        return;
       }
-
-      console.error('Quiz generation error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate quiz');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate quiz';
+      setError(errorMessage);
       setStatus('error');
     }
-  }, [pdfText, difficulty]);
+  }, [pdfText, difficulty, pdfExtractedText]);
 
   const selectAnswer = useCallback((questionId: string, answer: 'A' | 'B' | 'C' | 'D') => {
     setQuizState(prev => ({
@@ -179,21 +261,17 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
   const submitQuiz = useCallback(() => {
     const { questions, answers } = quizState;
     let correctCount = 0;
-
     questions.forEach(question => {
       if (answers[question.id] === question.correctAnswer) {
         correctCount++;
       }
     });
-
     const score = Math.round((correctCount / questions.length) * 100);
-
     setQuizState(prev => ({
       ...prev,
       score,
       isCompleted: true
     }));
-
     setStatus('completed');
   }, [quizState]);
 
@@ -209,7 +287,6 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
     setError(null);
   }, []);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (abortControllerRef.current) {
@@ -230,7 +307,6 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
   };
 };
 
-// Main Quiz Component
 export default function Quiz() {
   const { globalSpaceName, pdfExtractedText } = usePDF();
   const { user } = useUser();
@@ -250,14 +326,12 @@ export default function Quiz() {
     resetQuiz
   } = useQuiz(pdfExtractedText, difficulty);
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!user) {
       navigate("/login");
     }
   }, [user, navigate]);
 
-  // Helper functions
   const getScoreColor = (score: number): string => {
     if (score >= 80) return "text-green-600 dark:text-green-400";
     if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
@@ -289,7 +363,6 @@ export default function Quiz() {
     resetQuiz();
   };
 
-  // Difficulty Selection View
   if (showDifficultySelector) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -341,7 +414,6 @@ export default function Quiz() {
     );
   }
 
-  // Loading State
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -358,7 +430,6 @@ export default function Quiz() {
     );
   }
 
-  // Error State
   if (status === 'error') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
@@ -384,7 +455,6 @@ export default function Quiz() {
     );
   }
 
-  // Results View
   if (status === 'completed') {
     const { questions, answers, score } = quizState;
     const correctCount = questions.filter(q => answers[q.id] === q.correctAnswer).length;
@@ -478,17 +548,13 @@ export default function Quiz() {
               </div>
 
               <div className="flex flex-wrap gap-4 mt-8 justify-center">
-                <Button onClick={generateQuiz} size="lg">
-                  <RotateCw className="mr-2 h-4 w-4" />
-                  Retake Quiz
-                </Button>
                 <Button variant="outline" onClick={handleChangeDifficulty} size="lg">
                   <Play className="mr-2 h-4 w-4" />
                   New Quiz
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/')} size="lg">
+                <Button variant="outline" onClick={() => navigate('/dashboard')} size="lg">
                   <Home className="mr-2 h-4 w-4" />
-                  Back to Home
+                  Dashboard
                 </Button>
               </div>
             </CardContent>
@@ -498,7 +564,6 @@ export default function Quiz() {
     );
   }
 
-  // Quiz Taking View
   if (status === 'ready' && quizState.questions.length > 0) {
     const { questions, currentIndex, answers } = quizState;
     const currentQuestion = questions[currentIndex];
@@ -586,7 +651,6 @@ export default function Quiz() {
     );
   }
 
-  // Fallback state
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
