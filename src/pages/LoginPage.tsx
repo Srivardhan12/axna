@@ -35,12 +35,15 @@ export function LoginForm({
         e.preventDefault();
         setDisableButton(true);
         setErrorMessage("");
+
         try {
+            console.log("Trying login with", userLogin.email, userLogin.password);
             const userCredential = await signInWithEmailAndPassword(auth, userLogin.email, userLogin.password);
             const createdUser = userCredential.user;
-            // Fetch user data from Firestore
+
             const userDocRef = doc(db, "users", createdUser.uid);
             const userDocSnap = await getDoc(userDocRef);
+
             let userData = {
                 uid: createdUser.uid,
                 email: createdUser.email || "",
@@ -49,6 +52,7 @@ export function LoginForm({
                 spacesUsed: 0,
                 createdAt: new Date().toISOString(),
             };
+
             if (userDocSnap.exists()) {
                 const data = userDocSnap.data();
                 userData = {
@@ -59,14 +63,33 @@ export function LoginForm({
                     createdAt: data.createdAt,
                 };
             }
+
             login(userData);
             navigate("/dashboard");
-        } catch {
-            setErrorMessage("Invalid email or password");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+            console.error("Login error:", error.code, error.message);
+            switch (error.code) {
+                case "auth/user-not-found":
+                    setErrorMessage("User not found");
+                    break;
+                case "auth/wrong-password":
+                    setErrorMessage("Wrong password");
+                    break;
+                case "auth/invalid-email":
+                    setErrorMessage("Invalid email format");
+                    break;
+                case "auth/too-many-requests":
+                    setErrorMessage("Too many failed attempts. Try again later.");
+                    break;
+                default:
+                    setErrorMessage("Login failed. Please try again.");
+            }
         } finally {
             setDisableButton(false);
         }
-    }
+    };
+
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>

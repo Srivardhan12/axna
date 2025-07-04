@@ -54,7 +54,7 @@ interface QuizState {
 type DifficultyLevel = 'easy' | 'medium' | 'hard';
 type QuizStatus = 'idle' | 'loading' | 'ready' | 'completed' | 'error';
 
-const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
+const useQuiz = (difficulty: DifficultyLevel) => {
   const { pdfExtractedText } = usePDF()
   const [status, setStatus] = useState<QuizStatus>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const generateQuiz = useCallback(async () => {
-    if (!pdfText) return;
+    if (!pdfExtractedText) return;
 
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -102,35 +102,33 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
           {
             parts: [
               {
-                text: `${prompt}\n\nIMPORTANT: Respond with ONLY valid JSON in this exact format:`
+                text: `${prompt}`
               }
             ]
           }
         ],
         generationConfig: {
           temperature: 0.8,
-          maxOutputTokens: 4000,
-          topP: 0.8,
-          topK: 40
+          maxOutputTokens: 4000
         },
-        safetySettings: [
-          {
-            category: "HARM_CATEGORY_HARASSMENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_HATE_SPEECH",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-            threshold: "BLOCK_MEDIUM_AND_ABOVE"
-          }
-        ]
+        // safetySettings: [
+        //   {
+        //     category: "HARM_CATEGORY_HARASSMENT",
+        //     threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        //   },
+        //   {
+        //     category: "HARM_CATEGORY_HATE_SPEECH",
+        //     threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        //   },
+        //   {
+        //     category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        //     threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        //   },
+        //   {
+        //     category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+        //     threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        //   }
+        // ]
       };
 
       const response = await fetch(
@@ -239,7 +237,7 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
       setError(errorMessage);
       setStatus('error');
     }
-  }, [pdfText, difficulty, pdfExtractedText]);
+  }, [difficulty, pdfExtractedText]);
 
   const selectAnswer = useCallback((questionId: string, answer: 'A' | 'B' | 'C' | 'D') => {
     setQuizState(prev => ({
@@ -308,7 +306,7 @@ const useQuiz = (pdfText: string | null, difficulty: DifficultyLevel) => {
 };
 
 export default function Quiz() {
-  const { globalSpaceName, pdfExtractedText } = usePDF();
+  const { globalSpaceName, pdfExtractedText, setPdfExtractedText } = usePDF();
   const { user } = useUser();
   const navigate = useNavigate();
 
@@ -324,7 +322,7 @@ export default function Quiz() {
     navigateToQuestion,
     submitQuiz,
     resetQuiz
-  } = useQuiz(pdfExtractedText, difficulty);
+  } = useQuiz(difficulty);
 
   useEffect(() => {
     if (!user) {
@@ -552,7 +550,7 @@ export default function Quiz() {
                   <Play className="mr-2 h-4 w-4" />
                   New Quiz
                 </Button>
-                <Button variant="outline" onClick={() => navigate('/dashboard')} size="lg">
+                <Button variant="outline" onClick={() => { localStorage.setItem("pdfExtractedText", ""); setPdfExtractedText(""); navigate('/dashboard') }} size="lg">
                   <Home className="mr-2 h-4 w-4" />
                   Dashboard
                 </Button>
@@ -577,7 +575,7 @@ export default function Quiz() {
             <CardHeader>
               <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                 <CardTitle className="text-2xl">
-                  {globalSpaceName ? `${globalSpaceName} Quiz` : 'Quiz'}
+                  Quiz
                 </CardTitle>
                 <Badge className={getDifficultyColor(difficulty)}>
                   {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
@@ -632,7 +630,7 @@ export default function Quiz() {
                   <Button
                     onClick={submitQuiz}
                     className="bg-green-600 hover:bg-green-700"
-                    disabled={answeredCount === 0}
+                    disabled={answeredCount !== 10}
                   >
                     <CheckCircle className="mr-2 h-4 w-4" />
                     Submit Quiz

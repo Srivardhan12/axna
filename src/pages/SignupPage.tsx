@@ -56,10 +56,23 @@ export function SignupForm({
                 setDisableButton(false)
                 navigate("/login")
             })
-            .catch(() => {
-                setErrorMessage("User with this email already exists")
-                setDisableButton(false)
-            })
+            .catch((error) => {
+                console.error("Signup error:", error.code, error.message);
+                switch (error.code) {
+                    case "auth/email-already-in-use":
+                        setErrorMessage("Email already in use.");
+                        break;
+                    case "auth/invalid-email":
+                        setErrorMessage("Invalid email address.");
+                        break;
+                    case "auth/weak-password":
+                        setErrorMessage("Password should be at least 6 characters.");
+                        break;
+                    default:
+                        setErrorMessage("Signup failed. Please try again.");
+                }
+                setDisableButton(false);
+            });
     }
 
     return (

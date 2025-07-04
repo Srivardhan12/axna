@@ -36,7 +36,9 @@ const quizPrompt = ({ difficulty, pdfExtractedText }: { difficulty: string; pdfE
         }
             **Difficulty Level:** ${difficulty}
             **Number of Questions:** 10
-            **Text for Context:** ${pdfExtractedText}`;
+            **Text for Context:** ${pdfExtractedText}
+            \n\nIMPORTANT: Respond with ONLY valid JSON in this exact format:
+            `;
 };
 
 
