@@ -1,11 +1,17 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express, { Request, Response } from "express";
+import cors from "cors"
 import authRoutes from "./routes/auth.routes"
 import fearuteRoutes from "./routes/features.routes"
 
 const app = express()
 
+app.use(cors());
+
 app.use(express.json())
-const PORT = 8000
+const PORT = process.env.PORT
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello There")
@@ -15,5 +21,5 @@ app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1/feature", fearuteRoutes)
 
 app.listen(PORT, () => {
-    console.log("server started at port 8000")
+    console.log("server started")
 })

@@ -1,6 +1,35 @@
+import axios from "axios"
+import { useState } from "react"
+
 function App() {
+  const [file, setfile] = useState<File | null>(null)
+  const [res, setres] = useState<{ quiz?: any } | null>(null)
+  const difficulty = "medium"
+  const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const formData = new FormData();
+    if (file) {
+      formData.append("pdf", file);
+      formData.append("difficulty", difficulty)
+    }
+    const response = await axios.post("http://localhost:8000/api/v1/feature/quiz", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+    })
+
+    setres(response.data)
+    console.log(response.data.quiz)
+
+
+  }
   return (
-    <div>WROKING???</div>
+    <>
+      <form action="" onSubmit={handleUpload}>
+        <input type="file" name="pdf" id="pdf" onChange={(e) => setfile(e.target.files?.[0] || null)} />
+        <button type="submit">upload</button>
+      </form>
+    </>
   )
 }
 
