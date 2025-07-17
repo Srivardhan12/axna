@@ -36,9 +36,8 @@ export const quiz = async (req: Request, res: Response) => {
       }
     );
     const quiz = (response.data as { choices: { message: { content: string } }[] }).choices[0].message.content;
-    console.table(quiz)
-
-    res.json({ message: "PDF Recived", quiz: quiz });
+    const a = JSON.parse(quiz)
+    res.send(a);
   } catch (error) {
     res.status(500).json({ message: "Upload failed", error });
   }

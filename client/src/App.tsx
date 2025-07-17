@@ -3,7 +3,7 @@ import { useState } from "react"
 
 function App() {
   const [file, setfile] = useState<File | null>(null)
-  const [res, setres] = useState<{ quiz?: any } | null>(null)
+  const [res, setres] = useState<{ quiz?: unknown } | null>(null)
   const difficulty = "medium"
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -19,7 +19,7 @@ function App() {
     })
 
     setres(response.data)
-    console.log(response.data.quiz)
+    console.log(res?.quiz)
 
 
   }

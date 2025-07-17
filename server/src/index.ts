@@ -5,13 +5,15 @@ import express, { Request, Response } from "express";
 import cors from "cors"
 import authRoutes from "./routes/auth.routes"
 import fearuteRoutes from "./routes/features.routes"
+import { connectDB } from "./database/mongoose.connect";
 
 const app = express()
 
 app.use(cors());
-
-app.use(express.json())
 const PORT = process.env.PORT
+app.use(express.json())
+
+connectDB()
 
 app.get("/", (req: Request, res: Response) => {
     res.send("Hello There")
