@@ -62,17 +62,19 @@ export default function LandingPage() {
                         <p className='karla pt-5'>With Axna, you can study smarter by transforming any PDF into interactive quizzes and flashcards. Track your progress effortlessly and reinforce your understanding of key concepts, ensuring you retain what you learn.</p>
                     </div>
                     <div>
-                        <div className='md:w-xl bg-gray-400 aspect-video w-80'></div>
+                        <div className='md:w-xl bg-gray-400 aspect-video w-80 rounded-xl'></div>
                     </div>
                 </div>
             </div>
             <div className='mt-10'>
                 <div className='flex flex-col md:flex-row justify-center px-10 mt-20 gap-10'>
-                    <div>
-                        <h2 className='font-semibold text-5xl arima'>Experience the Future of Studying with Axna</h2>
-                        <p className='karla py-5'>Axna is designed to make studying more efficient and enjoyable. By converting your PDFs into interactive formats, you can engage with your material like never before. Say goodbye to traditional studying methods and hello to a smarter way of learning.</p>
+                    <div className='flex flex-col md:flex-row justify-center gap-10 mt-20'>
                         <div>
-                            <div className='md:w-xl bg-gray-400 aspect-video w-80'></div>
+                            <div className='md:w-xl bg-gray-400 aspect-video w-80 rounded-xl'></div>
+                        </div>
+                        <div>
+                            <h2 className='font-semibold text-5xl arima'>Experience the Future of Studying with Axna</h2>
+                            <p className='karla py-5'>Axna is designed to make studying more efficient and enjoyable. By converting your PDFs into interactive formats, you can engage with your material like never before. Say goodbye to traditional studying methods and hello to a smarter way of learning.</p>
                         </div>
                     </div>
                 </div>
@@ -91,7 +93,7 @@ export default function LandingPage() {
                 <div className='flex flex-col sm:md:flex-row justify-center px-20 mt-20 gap-3 '>
                     {howItWorks.map((step, index) => (
                         <div key={index} className='p-5 border rounded flex flex-col items-center w-full'>
-                            <div className='w-96 bg-gray-400 aspect-video rounded'></div>
+                            <div className='w-96 bg-gray-400 aspect-video rounded-sm'></div>
                             <h3 className='text-xl font-semibold arima mt-5 mb-1'>{step.title}</h3>
                             <p className='karla mt-auto'>{step.description}</p>
                         </div>
