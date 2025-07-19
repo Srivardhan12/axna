@@ -4,7 +4,7 @@ export const quizPrompt = (diffculty: string, content: string) => {
         Your task is to analyze the provided text and create quiz questions that test understanding at the specified difficulty level.
 
         ## Quiz Requirements:
-        - Create exactly **10** multiple-choice questions
+        - Create exactly **3** multiple-choice questions
         - Difficulty level: **${diffculty}** 
             - **Easy**: Basic recall and recognition of facts
             - **Medium**: Comprehension and understanding of concepts
@@ -18,8 +18,7 @@ export const quizPrompt = (diffculty: string, content: string) => {
         ## Output Format:
         Return only a valid JSON object with this exact structure:
 
-        json{
-            "quiz": [
+            [
                 {
                     "question": "Question text here?",
                     "answerOptions": {
@@ -32,9 +31,8 @@ export const quizPrompt = (diffculty: string, content: string) => {
                     "explanation": "Detailed explanation of why this answer is correct and why others are incorrect."
                 }
             ]
-        }
         **Difficulty Level:** ${diffculty}
-        **Number of Questions:** 10
+        **Number of Questions:** 3
         **Text for Context:** ${content}
         IMPORTANT: Respond with ONLY valid JSON in this exact format:
     `;

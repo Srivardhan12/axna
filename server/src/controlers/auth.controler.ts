@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import { User } from "../models/auth.model";
+import { generateToken } from "../utils/jwt";
 
 export const signup = async (req: Request, res: Response) => {
     try {
@@ -12,7 +13,9 @@ export const signup = async (req: Request, res: Response) => {
         const user = new User({ username: username, email: email, password: hashedPassword })
         user.save()
 
-        res.status(201).json({ message: "Signup successful", user: { email, username } });
+        const token = generateToken({ username: user.username });
+
+        res.status(200).json({ token: token });
     } catch (error) {
         res.status(500).json({ message: "Error", errorMessage: error })
     }
@@ -26,7 +29,9 @@ export const signin = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.compare(password, existUser.password);
         if (!hashedPassword) return res.status(401).json({ message: "Invalid credentials" });
 
-        res.status(200).json({ message: "Login successful", user: { email, username: existUser.username } });
+        const token = generateToken({ username: existUser.username });
+
+        res.status(200).json({ token: token });
     } catch (error) {
         res.status(500).json({ message: "Error", errorMessage: error })
     }
