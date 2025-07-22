@@ -1,8 +1,27 @@
 import { Link } from 'react-router-dom'
 import { InteractiveHoverButton } from "@/components/magicui/interactive-hover-button";
+import { useEffect } from 'react';
+import Lenis from '@studio-freight/lenis';
 
 
 export default function LandingPage() {
+    useEffect(() => {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+
+        function raf(time: number) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
+        return () => {
+            lenis.destroy();
+        };
+    }, []);
 
     const howItWorks = [
         {
@@ -46,7 +65,7 @@ export default function LandingPage() {
             <div className='h-screen w-full'>
                 <nav className="flex justify-between items-center p-4">
                     <span className="arima"><Link to="/">AXNA</Link></span>
-                    <span className="karla"><Link to="/login"><InteractiveHoverButton className='py-1'>Login</InteractiveHoverButton></Link></span>
+                    <span className="karla"><Link to="/signin"><InteractiveHoverButton className='uppercase text-sm'>Sign in</InteractiveHoverButton></Link></span>
                 </nav>
                 <div className='flex flex-col justify-center h-[60vh] px-5 w-full'>
                     <h1 className='arima uppercase lg:text-[400px] md:text-[250px] text-[120px] mt-10'>Axna</h1>
@@ -102,7 +121,7 @@ export default function LandingPage() {
             </div>
             <div className='mt-10 flex flex-col items-center gap-2'>
                 <p className='text-3xl arima'>Start Your Journey</p>
-                <Link to='/signup'><InteractiveHoverButton className='cursor-pointer rounded-full bg-blue-200'>Get Started</InteractiveHoverButton></Link>
+                <Link to='/signin'><InteractiveHoverButton className='cursor-pointer rounded-full text-sm'>Get Started</InteractiveHoverButton></Link>
             </div>
             <div className='mt-10'>
                 <div className='flex flex-col md:flex-row justify-center px-20 mt-20 gap-20'>
