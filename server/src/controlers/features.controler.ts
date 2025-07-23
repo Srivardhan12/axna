@@ -63,24 +63,30 @@ const splitIntoChunks = (text: string, parts: number = 4): string[] => {
 
 // Send a single prompt to the LLM
 const callLLM = async (prompt: string) => {
-  const response = await axios.post(
+  const apiKey = process.env.LLM_API_KEY;
+
+  interface LLMResponse {
+    choices: { message: { content: string } }[];
+  }
+
+  const response = await axios.post<LLMResponse>(
     "https://openrouter.ai/api/v1/chat/completions",
     {
-      model: process.env.LLM_MODEL,
+      model: "mistralai/mistral-7b-instruct",
       messages: [{ role: "user", content: prompt }],
       temperature: 1,
     },
     {
       headers: {
-        Authorization: `Bearer ${process.env.LLM_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
     }
   );
-
-  const content = (response.data as { choices: { message: { content: string } }[] }).choices[0].message.content;
-  return JSON.parse(content);
+  const res = JSON.parse(response.data.choices?.[0]?.message?.content)
+  return res;
 };
+
 
 export const quizopt = async (req: Request, res: Response) => {
   try {

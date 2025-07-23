@@ -5,18 +5,23 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useDispatch } from "react-redux"
+import { SIGNUP } from "@/redux/actions"
 
 export function SignupComponent({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const dispatch = useDispatch()
   const [user, setUser] = useState({})
-  console.log(user)
+  const handleSubmit = () => {
+    dispatch(SIGNUP(user))
+  }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8">
+          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -26,7 +31,7 @@ export function SignupComponent({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="username">Username</Label>
-                <Input id="password" type="text" required placeholder="axna" onChange={(e) => { setUser({ ...user, username: e.target.value }) }} />
+                <Input id="username" type="text" required placeholder="axna" onChange={(e) => { setUser({ ...user, username: e.target.value }) }} />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
