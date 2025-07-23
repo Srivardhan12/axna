@@ -26,4 +26,5 @@ app.use("/api/v1/store", storeQuiz)
 
 app.listen(PORT, () => {
     console.log("server started")
+    console.log(process.env.LLM_API_KEY)
 })

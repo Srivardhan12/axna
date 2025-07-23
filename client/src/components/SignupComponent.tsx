@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { Link } from "react-router-dom"
 
-export function SigninComponent({
+export function SignupComponent({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -23,6 +23,10 @@ export function SigninComponent({
                 <p className="text-muted-foreground text-balance">
                   Login to your AXNA account
                 </p>
+              </div>
+              <div className="grid gap-3">
+                <Label htmlFor="username">Username</Label>
+                <Input id="password" type="text" required placeholder="axna" onChange={(e) => { setUser({ ...user, username: e.target.value }) }} />
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
@@ -42,9 +46,9 @@ export function SigninComponent({
                 Sign In
               </Button>
               <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link to="/signup" className="underline underline-offset-4">
-                  Sign up
+                Already have an account?{" "}
+                <Link to="/signin" className="underline underline-offset-4">
+                  Sign in
                 </Link>
               </div>
             </div>
@@ -61,3 +65,4 @@ export function SigninComponent({
     </div>
   )
 }
+
