@@ -15,7 +15,7 @@ export const signup = async (req: Request, res: Response) => {
 
         const token = generateToken({ username: user.username });
 
-        res.status(200).json({ token: token });
+        res.status(200).json({ token: token, email: email, username: username });
     } catch (error) {
         res.status(500).json({ message: "Error", errorMessage: error })
     }
@@ -31,7 +31,7 @@ export const signin = async (req: Request, res: Response) => {
 
         const token = generateToken({ username: existUser.username });
 
-        res.status(200).json({ token: token });
+        res.status(200).json({ token: token, email: email, username: existUser.username });
     } catch (error) {
         res.status(500).json({ message: "Error", errorMessage: error })
     }

@@ -36,7 +36,7 @@ export function SigninComponent({
               </div>
               <div className="grid gap-3">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" required placeholder="********" onChange={(e) => { setUser({ ...user, password: e.target.value }) }} />
+                <Input id="password" type="password" required placeholder="********" autoComplete="on" onChange={(e) => { setUser({ ...user, password: e.target.value }) }} />
               </div>
               <Button type="submit" className="w-full cursor-pointer">
                 Sign In

@@ -1,9 +1,14 @@
-import { type Action } from 'redux';
-
 const initialState = {};
 
-export const reducer = (state = initialState, actions: Action) => {
-  switch (actions.type) {
+type action = {
+  type: string,
+  payload: object
+}
+
+export const reducer = (state = initialState, action: action) => {
+  switch (action.type) {
+    case "SIGNUP":
+      return { ...state, user: action.payload }
     default:
       return state;
   }
