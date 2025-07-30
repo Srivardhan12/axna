@@ -22,7 +22,6 @@
   font-style: normal;
 }
 
-
 .karla {
   font-family: "Karla", sans-serif;
   font-optical-sizing: auto;
@@ -41,7 +40,6 @@
   font-weight: 700;
   font-style: normal;
 }
-
 
 @custom-variant dark (&:is(.dark *));
 
