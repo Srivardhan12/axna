@@ -159,3 +159,15 @@ export const SIGNIN = (payload: signin, navigate: NavigateFunction) => {
     }
   };
 }
+
+export const LOGOUT = (navigate: NavigateFunction) => {
+  // @ts-expect-error dispatch error
+  return (dispatch): VoidFunction => {
+    dispatch({
+      type: "LOGOUT", payload: {
+        response: null
+      }
+    });
+    navigate("/");
+  };
+}
