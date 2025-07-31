@@ -7,5 +7,9 @@ export const generateToken = (payload: object, expiresIn: string = '1h') => {
 };
 
 export const verifyToken = (token: string) => {
-    return jwt.verify(token, JWT_SECRET);
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+        return null
+    }
 };

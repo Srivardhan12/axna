@@ -10,8 +10,11 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
 
         const token = authHeader.split(" ")[1];
 
-        const decoded = verifyToken(token)
-        next()
+        const decoded = verifyToken(token);
+        if (!decoded)
+            return res.status(401).json({ message: "Invalid Token" });
+        next();
+
     } catch (error) {
         return res.status(403).json({ message: 'Invalid or expired token' });
     }

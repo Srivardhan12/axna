@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { SIGNIN } from "@/redux/actions"
+import { SIGNIN } from "@/redux/auth-actions"
 import { useDispatch, useSelector } from "react-redux"
 
 export type signin = {

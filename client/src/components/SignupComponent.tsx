@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux"
-import { SIGNUP } from "@/redux/actions"
+import { SIGNUP } from "@/redux/auth-actions"
 
 export type state = {
   user: {
