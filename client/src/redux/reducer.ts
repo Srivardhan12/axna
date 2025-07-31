@@ -4,7 +4,8 @@ type action = {
   type: string,
   payload: {
     response: string,
-    isSignup: boolean
+    isSignup: boolean,
+    file: File
   }
 }
 
@@ -19,7 +20,7 @@ export const reducer = (state = initialState, action: action) => {
     case "CLEAR_PDF_FILE":
       return { ...state, file: null, };
     case "LOGOUT":
-      return { ...state, user: action.payload.response }
+      return { ...state, user: action.payload.response, isSignup: action.payload.isSignup, file: action.payload.file }
     default:
       return state;
   }

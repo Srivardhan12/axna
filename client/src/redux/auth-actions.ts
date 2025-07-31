@@ -165,7 +165,9 @@ export const LOGOUT = (navigate: NavigateFunction) => {
   return (dispatch): VoidFunction => {
     dispatch({
       type: "LOGOUT", payload: {
-        response: null
+        response: null,
+        isSignup: false,
+        file: null
       }
     });
     navigate("/");
