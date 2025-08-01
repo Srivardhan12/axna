@@ -21,33 +21,6 @@ const splitIntoChunks = (text: string, parts: number = 4): string[] => {
   return chunks;
 };
 
-// Send a single prompt to the LLM
-// const callLLM = async (prompt: string) => {
-//   const apiKey = process.env.LLM_API_KEY;
-
-//   interface LLMResponse {
-//     choices: { message: { content: string } }[];
-//   }
-
-//   const response = await axios.post<LLMResponse>(
-//     "https://openrouter.ai/api/v1/chat/completions",
-//     {
-//       model: "mistralai/mistral-7b-instruct",
-//       messages: [{ role: "user", content: prompt }],
-//       temperature: 1,
-//     },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${apiKey}`,
-//         "Content-Type": "application/json",
-//       },
-//     }
-//   );
-//   const res = JSON.parse(response.data.choices?.[0]?.message?.content)
-//   return res;
-// };
-
-
 const ai = new GoogleGenAI({
   apiKey: process.env.LLM_API_KEY
 });
@@ -58,7 +31,6 @@ async function callLLM(prompt: string) {
     model: process.env.LLM_MODEL || "",
     contents: prompt,
   });
-  // console.log(response.text)
   // @ts-expect-error need to check for later
   return JSON.parse(response.text);
 }
