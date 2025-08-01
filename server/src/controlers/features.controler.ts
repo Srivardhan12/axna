@@ -1,50 +1,10 @@
 import { Request, Response } from "express";
 import pdfParse from "pdf-parse";
-import axios from "axios";
 import { quizPrompt } from "../prompts/quiz-prompt";
+import { GoogleGenAI } from "@google/genai";
+import dotenv from "dotenv";
 
-export const quiz = async (req: Request, res: Response) => {
-  try {
-    if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-
-    // get file data
-    const buffer = req.file.buffer;
-    const diffculty = req.body.diffculty
-
-    // extract data from the pdf
-    const data = await pdfParse(buffer);
-    const extractedText = data.text;
-
-    const quizprompt = quizPrompt(diffculty, extractedText)
-
-    // calling llm for quiz
-    const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-      model: process.env.LLM_MODEL,
-      messages: [
-        {
-          role: "user",
-          content: quizprompt,
-          temperature: 1
-        },
-      ],
-    },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.LLM_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const quiz = (response.data as { choices: { message: { content: string } }[] }).choices[0].message.content;
-    const a = JSON.parse(quiz)
-    res.send(a);
-  } catch (error) {
-    res.status(500).json({ message: "Upload failed", error });
-  }
-};
-
-
-
+dotenv.config()
 
 // Split the text into exactly 4 equal-sized chunks
 const splitIntoChunks = (text: string, parts: number = 4): string[] => {
@@ -62,33 +22,48 @@ const splitIntoChunks = (text: string, parts: number = 4): string[] => {
 };
 
 // Send a single prompt to the LLM
-const callLLM = async (prompt: string) => {
-  const apiKey = process.env.LLM_API_KEY;
+// const callLLM = async (prompt: string) => {
+//   const apiKey = process.env.LLM_API_KEY;
 
-  interface LLMResponse {
-    choices: { message: { content: string } }[];
-  }
+//   interface LLMResponse {
+//     choices: { message: { content: string } }[];
+//   }
 
-  const response = await axios.post<LLMResponse>(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      model: "mistralai/mistral-7b-instruct",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 1,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  const res = JSON.parse(response.data.choices?.[0]?.message?.content)
-  return res;
-};
+//   const response = await axios.post<LLMResponse>(
+//     "https://openrouter.ai/api/v1/chat/completions",
+//     {
+//       model: "mistralai/mistral-7b-instruct",
+//       messages: [{ role: "user", content: prompt }],
+//       temperature: 1,
+//     },
+//     {
+//       headers: {
+//         Authorization: `Bearer ${apiKey}`,
+//         "Content-Type": "application/json",
+//       },
+//     }
+//   );
+//   const res = JSON.parse(response.data.choices?.[0]?.message?.content)
+//   return res;
+// };
 
 
-export const quizopt = async (req: Request, res: Response) => {
+const ai = new GoogleGenAI({
+  apiKey: process.env.LLM_API_KEY
+});
+
+
+async function callLLM(prompt: string) {
+  const response = await ai.models.generateContent({
+    model: process.env.LLM_MODEL || "",
+    contents: prompt,
+  });
+  // console.log(response.text)
+  // @ts-expect-error need to check for later
+  return JSON.parse(response.text);
+}
+
+export const quiz = async (req: Request, res: Response) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -113,10 +88,10 @@ export const quizopt = async (req: Request, res: Response) => {
     // Step 5: Merge all quiz results
     const quiz = results.flat();
 
-    res.send(quiz);
+    res.send(quiz)
   } catch (error) {
     console.error("LLM error:", error);
-    res.status(500).json({ message: "Quiz generation failed", error });
+    // @ts-expect-error error type
+    res.status(500).json({ message: "Quiz generation failed", error: error.message });
   }
 };
-
