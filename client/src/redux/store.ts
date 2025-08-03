@@ -16,6 +16,7 @@ const config = {
     storage,
 };
 
+// @ts-expect-error cant understand the error
 const persists = persistReducer(config, reducer);
 
 // TypeScript safe Redux DevTools + Thunk

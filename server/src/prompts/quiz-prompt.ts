@@ -28,6 +28,6 @@ export const quizPrompt = (difficulty: string, content: string) => {
         ${content}
         No "BACKQUOTES" or "JSON"
         Send only a valid json object
-        Not any hearders or copy edit buttons only a valid json not in editor
+        Not any hearders or copy, edit buttons only a valid json not in editor
         `;
 };
