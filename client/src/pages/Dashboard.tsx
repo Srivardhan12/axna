@@ -1,12 +1,13 @@
 import { AppSidebar } from "@/components/dashboard/app-sidebar"
-import PdfUpload from "@/components/PdfUpload";
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react"
+import { Outlet } from "react-router-dom";
 
 export default function Page() {
   const [dark, setDark] = useState(() => {
@@ -30,22 +31,19 @@ export default function Page() {
         <AppSidebar />
         <SidebarInset>
           <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-            <div className="flex items-center gap-2 px-4">
+            <div className="flex items-center  w-full gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               <div className="relative flex items-center">
-                <span
-                  className="absolute h-4 w-4 rounded-full mr-10 cursor-pointer bg-black dark:bg-white"
-                  onClick={() => setDark(!dark)}
-                />
+                <p className="cursor-pointer" onClick={() => setDark(!dark)} >{dark ? <Sun size={20} /> : <Moon size={20} />}</p>
               </div>
             </div>
           </header>
-          <div>
-            <PdfUpload />
+          <div className="px-5">
+            <Outlet />
           </div>
         </SidebarInset>
       </SidebarProvider>
-    </div>
+    </div >
   );
 }

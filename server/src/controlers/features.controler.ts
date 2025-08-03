@@ -30,6 +30,7 @@ async function callLLM(prompt: string) {
   const response = await ai.models.generateContent({
     model: process.env.LLM_MODEL || "",
     contents: prompt,
+
   });
   // @ts-expect-error need to check for later
   return JSON.parse(response.text);
@@ -49,18 +50,20 @@ export const quiz = async (req: Request, res: Response) => {
     const extractedText = data.text;
 
     // Step 2: Split into 4 chunks
-    const chunks = splitIntoChunks(extractedText, 4);
+    // const chunks = splitIntoChunks(extractedText, 4);
 
     // Step 3: Create prompts for each chunk
-    const prompts = chunks.map(chunk => quizPrompt(difficulty, chunk));
+    // const prompts = chunks.map(chunk => quizPrompt(difficulty, chunk));
 
     // Step 4: Call all LLM prompts in parallel
-    const results = await Promise.all(prompts.map(prompt => callLLM(prompt)));
+    // const results = await Promise.all(prompts.map(prompt => callLLM(prompt)));
 
     // Step 5: Merge all quiz results
-    const quiz = results.flat();
+    // const quiz = results.flat();
 
-    res.send(quiz)
+    const prompt = quizPrompt(difficulty, extractedText)
+    const quiz = await callLLM(prompt)
+    res.status(200).send(quiz)
   } catch (error) {
     console.error("LLM error:", error);
     // @ts-expect-error error type

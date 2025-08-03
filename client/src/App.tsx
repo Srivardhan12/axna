@@ -3,6 +3,9 @@ import LandingPage from "./pages/LandingPage"
 import Signin from "./pages/Signin"
 import Signup from "./pages/Signup"
 import Dashboard from "./pages/Dashboard"
+import GenerateQuiz from "./pages/GenerateQuiz"
+import Quiz from "./pages/Quiz"
+import Results from "./pages/Results"
 
 function App() {
   return (
@@ -12,7 +15,11 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} >
+            <Route index element={<GenerateQuiz />} />
+            <Route path="quiz" element={<Quiz />} />
+            <Route path="results" element={<Results />} />
+          </Route >
         </Routes>
       </BrowserRouter>
     </>

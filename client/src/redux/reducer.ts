@@ -1,26 +1,86 @@
-const initialState = {};
+const initialState = {
+  user: null,
+  isSignup: null,
+  file: null,
+  difficulty: null,
+  quiz: null,
+  loading: false,
+  error: null,
+};
 
 type action = {
-  type: string,
-  payload: {
-    response: string,
-    isSignup: boolean,
-    file: File
-  }
-}
+  type: string;
+  payload?: {
+    response?: string | null;
+    isSignup?: boolean | null;
+    file?: File | null;
+    difficulty?: string | null;
+    quiz?: object;
+    error?: string;
+  };
+};
 
 export const reducer = (state = initialState, action: action) => {
   switch (action.type) {
     case "SIGNUP":
-      return { ...state, user: action.payload.response, isSignup: action.payload.isSignup }
     case "SIGNIN":
-      return { ...state, user: action.payload.response, isSignup: action.payload.isSignup }
+      return {
+        ...state,
+        user: action.payload?.response || null,
+        isSignup: action.payload?.isSignup ?? null,
+      };
+
     case "SET_PDF_FILE":
-      return { ...state, file: action.payload };
-    case "CLEAR_PDF_FILE":
-      return { ...state, file: null, };
+      return {
+        ...state,
+        file: action.payload?.file || null,
+      };
+
+    case "SET_DIFFICULTY":
+      return {
+        ...state,
+        difficulty: action.payload?.difficulty || null,
+      };
+
+    case "QUIZ_REQUEST":
+      return {
+        ...state,
+        loading: true,
+        file: action.payload?.file,
+        difficulty: action.payload?.difficulty
+      };
+
+    case "QUIZ_SUCCESS":
+      return {
+        ...state,
+        loading: false,
+        quiz: action.payload || null,
+      };
+
+    case "QUIZ_FAILURE":
+      return {
+        ...state,
+        loading: false,
+        error: action.payload || "Something went wrong",
+      };
+
+    case "ANSWERS":
+      return {
+        ...state,
+        userAnswers: action.payload
+      }
+
     case "LOGOUT":
-      return { ...state, user: action.payload.response, isSignup: action.payload.isSignup, file: action.payload.file }
+      return {
+        user: null,
+        isSignup: null,
+        file: null,
+        difficulty: null,
+        quiz: null,
+        loading: false,
+        error: null,
+      };
+
     default:
       return state;
   }

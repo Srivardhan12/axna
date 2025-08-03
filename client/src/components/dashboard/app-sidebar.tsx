@@ -2,16 +2,15 @@ import * as React from "react"
 import {
     BookOpen,
     Bot,
-    Frame,
-    Map,
-    PieChart,
-    Settings2,
+    // Frame,
+    // Map,
+    // PieChart,
     SquareTerminal,
     House
 } from "lucide-react"
 
 import { NavMain } from "@/components/dashboard/nav-main"
-import { NavProjects } from "@/components/dashboard/nav-projects"
+// import { NavProjects } from "@/components/dashboard/nav-projects"
 import { NavUser } from "@/components/dashboard/nav-user"
 import { TeamSwitcher } from "@/components/dashboard/team-switcher"
 import {
@@ -34,48 +33,10 @@ const data = {
     ],
     navMain: [
         {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
-        },
-        {
-            title: "Models",
-            url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
-        },
-        {
             title: "Documentation",
             url: "#",
             icon: BookOpen,
+            isActive: true,
             items: [
                 {
                     title: "Introduction",
@@ -88,59 +49,63 @@ const data = {
                 {
                     title: "Tutorials",
                     url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
+                }
             ],
         },
         {
-            title: "Settings",
+            title: "AXNA",
             url: "#",
-            icon: Settings2,
+            icon: SquareTerminal,
+            isActive: true,
             items: [
                 {
-                    title: "General",
+                    title: "What is AXNA",
                     url: "#",
                 },
                 {
-                    title: "Team",
+                    title: "How to use AXNA",
                     url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
+                }
             ],
         },
+        {
+            title: "Models",
+            url: "#",
+            icon: Bot,
+            items: [
+                {
+                    title: "Gemini 2.5 flash",
+                    url: "#",
+                },
+                {
+                    title: "OpenRouter",
+                    url: "#",
+                }
+            ],
+        }
     ],
-    projects: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
-        },
-        {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: Map,
-        },
-    ],
+    // projects: [
+    //     {
+    //         name: "Design Engineering",
+    //         url: "#",
+    //         icon: Frame,
+    //     },
+    //     {
+    //         name: "Sales & Marketing",
+    //         url: "#",
+    //         icon: PieChart,
+    //     },
+    //     {
+    //         name: "Travel",
+    //         url: "#",
+    //         icon: Map,
+    //     },
+    // ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // @ts-expect-error same error
-    const user = useSelector(state => state.user)
+    const user = useSelector((state) => state.user)
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -149,7 +114,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavProjects projects={data.projects} />
+                {/* <NavProjects projects={data.projects} /> */}
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={user} />

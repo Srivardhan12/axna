@@ -167,7 +167,8 @@ export const LOGOUT = (navigate: NavigateFunction) => {
       type: "LOGOUT", payload: {
         response: null,
         isSignup: false,
-        file: null
+        file: null,
+        diffciulty: null
       }
     });
     navigate("/");

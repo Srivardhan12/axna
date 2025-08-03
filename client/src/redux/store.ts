@@ -1,19 +1,31 @@
-import { legacy_createStore as createstore } from "redux"
-import { reducer } from "./reducer"
-import { applyMiddleware } from "redux"
-import { thunk } from "redux-thunk"
-import { compose } from "redux"
-import { persistReducer, persistStore } from "redux-persist"
-import storage from "redux-persist/lib/storage"
+import { legacy_createStore as createStore, applyMiddleware, compose } from "redux";
+import { reducer } from "./reducer";
+import { thunk } from "redux-thunk";
+import { persistReducer, persistStore } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+
+declare global {
+    interface Window {
+        __REDUX_DEVTOOLS_EXTENSION__?: typeof compose;
+    }
+}
+
 
 const config = {
     key: "redux",
-    storage
-}
+    storage,
+};
 
-const persists = persistReducer(config, reducer)
-// @ts-expect-error cant find the solution to this error
-const composer = compose(applyMiddleware(thunk), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+const persists = persistReducer(config, reducer);
 
-export const store = createstore(persists, composer)
-export const persistReduce = persistStore(store)
+// TypeScript safe Redux DevTools + Thunk
+const composer =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+export const store = createStore(
+    persists,
+    composer(applyMiddleware(thunk))
+);
+
+export const persistReduce = persistStore(store);

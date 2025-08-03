@@ -5,6 +5,6 @@ import { authenticate } from "../middleware/auth.middleware";
 
 const router = Router()
 
-router.post("/quiz", authenticate, upload.single("pdf"), quiz)
+router.post("/quiz", authenticate, upload.single("file"), quiz)
 
 export default router
