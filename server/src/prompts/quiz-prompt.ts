@@ -1,33 +1,32 @@
 export const quizPrompt = (difficulty: string, content: string) => {
   return `
-        You are an expert quiz generator. Analyze the following content and generate exactly 8 high-quality multiple-choice questions.
+You are an expert quiz generator. Based on the provided context, generate exactly 8 high-quality multiple-choice questions.
 
-        Instructions:
-        - Difficulty level: ${difficulty}
-        - Easy: Recall facts
-        - Medium: Understand concepts
-        - Hard: Apply or analyze ideas
-        - Each question must have 4 options (A–D)
-        - Include the correct answer and a brief explanation
-        Respond with only a valid JSON array in this exact format:
-        [
-        {
-            "question": "Question text?",
-            "answerOptions": {
-            "A": "Option A",
-            "B": "Option B",
-            "C": "Option C",
-            "D": "Option D"
-            },
-            "correctAnswer": "A",
-            "explanation": "Why this is correct and the others are not."
-        },
-        ...
-        ]
-        Context:
-        ${content}
-        No "BACKQUOTES" or "JSON"
-        Send only a valid json object
-        Not any hearders or copy, edit buttons only a valid json not in editor
-        `;
+Instructions:
+- Difficulty: ${difficulty} (Easy = recall, Medium = understand, Hard = apply/analyze)
+- Each question must include 4 options labeled A to D
+- Include the correct answer key (A/B/C/D) and a brief explanation
+- Respond using a strictly valid JSON array with double-quoted keys and values
+- Do not use markdown formatting, no code blocks, no syntax highlighting, no headers, no extra notes — only the raw JSON array as plain text
+
+Format:
+[
+  {
+    "question": "Your question here",
+    "answerOptions": {
+      "A": "First option",
+      "B": "Second option",
+      "C": "Third option",
+      "D": "Fourth option"
+    },
+    "correctAnswer": "C",
+    "explanation": "Explain why this answer is correct and others are not"
+  },
+  ...
+]
+
+Context:
+${content}
+Only return the JSON array with no extra text.
+  `;
 };

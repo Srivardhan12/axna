@@ -28,18 +28,21 @@ export const reducer = (state = initialState, action: action) => {
         ...state,
         user: action.payload?.response || null,
         isSignup: action.payload?.isSignup ?? null,
+        quiz: null
       };
 
     case "SET_PDF_FILE":
       return {
         ...state,
         file: action.payload?.file || null,
+        quiz: null
       };
 
     case "SET_DIFFICULTY":
       return {
         ...state,
         difficulty: action.payload?.difficulty || null,
+        quiz: null
       };
 
     case "QUIZ_REQUEST":
@@ -47,7 +50,9 @@ export const reducer = (state = initialState, action: action) => {
         ...state,
         loading: true,
         file: action.payload?.file,
-        difficulty: action.payload?.difficulty
+        difficulty: action.payload?.difficulty,
+        quiz: null
+
       };
 
     case "QUIZ_SUCCESS":
