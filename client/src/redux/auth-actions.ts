@@ -18,6 +18,7 @@ type signinAPI = {
     response: object | string,
     isSignup: boolean,
     error?: string
+    status: number
   };
 };
 
@@ -57,13 +58,12 @@ export const SIGNUP = (payload: signup, navigate: NavigateFunction) => {
         dispatch({
           type: "SIGNUP",
           payload: {
-            response: serverMessage, // Use server's specific error message
+            response: serverMessage,
             isSignup: false,
             error: serverMessage
           }
         });
       } else if (error.request) {
-        // Network error - request was made but no response received
         console.error("Network error:", error.request);
 
         dispatch({
@@ -75,7 +75,6 @@ export const SIGNUP = (payload: signup, navigate: NavigateFunction) => {
           }
         });
       } else {
-        // Something else happened
         console.error("Signup error:", error.message);
 
         dispatch({
@@ -106,33 +105,33 @@ export const SIGNIN = (payload: signin, navigate: NavigateFunction) => {
         type: "SIGNIN",
         payload: {
           response: response.data || "",
-          isSignup: true
+          isSignup: true,
+          status: response.status
         }
       });
-      navigate("/dashboard");
+      if (response.status === 200) navigate("/dashboard");
 
     } catch (err) {
       // @ts-expect-error Cannot find namespace 'axios'. Did you mean 'Axios'?
       const error = err as axios.AxiosError;
 
       if (error.response) {
-        // Server responded with error status
         const serverMessage = error.response.data?.message ||
           error.response.data?.error ||
           error.response.data;
 
-        console.error("Signup error:", error.response.data);
+        console.error("Signin error:", error.response.data);
 
         dispatch({
           type: "SIGNUP",
           payload: {
-            response: serverMessage, // Use server's specific error message
+            response: serverMessage,
             isSignup: false,
-            error: serverMessage
+            error: serverMessage,
+            status: error.response.status
           }
         });
       } else if (error.request) {
-        // Network error - request was made but no response received
         console.error("Network error:", error.request);
 
         dispatch({
@@ -140,11 +139,11 @@ export const SIGNIN = (payload: signin, navigate: NavigateFunction) => {
           payload: {
             response: "Network error. Please check your connection.",
             isSignup: false,
-            error: "Network error"
+            error: "Network error",
+            status: error.response.status
           }
         });
       } else {
-        // Something else happened
         console.error("Signup error:", error.message);
 
         dispatch({
@@ -152,7 +151,8 @@ export const SIGNIN = (payload: signin, navigate: NavigateFunction) => {
           payload: {
             response: error.message || "An unexpected error occurred",
             isSignup: false,
-            error: error.message
+            error: error.message,
+            status: error.response.status
           }
         });
       }

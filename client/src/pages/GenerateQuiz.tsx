@@ -28,7 +28,7 @@ export default function GenerateQuiz() {
     }
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("pdf", file);
     formData.append("difficulty", difficulty);
     //@ts-expect-error error
     dispatch(GENERATE_QUIZ(formData, user.token, file, difficulty, navigate));

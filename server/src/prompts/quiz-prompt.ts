@@ -1,9 +1,9 @@
 export const quizPrompt = (difficulty: string, content: string) => {
   return `
-You are an expert quiz generator. Based on the provided context, generate exactly 8 high-quality multiple-choice questions.
+You are an expert quiz generator. Based on the provided context, generate exactly 3 high-quality multiple-choice questions.
 
 Instructions:
-- Difficulty: ${difficulty} (Easy = recall, Medium = understand, Hard = apply/analyze)
+- Difficulty: ${difficulty} (Easy = recall, Medium = medium level with complex questions, Hard = apply/analyze a little out of topic)
 - Each question must include 4 options labeled A to D
 - Include the correct answer key (A/B/C/D) and a brief explanation
 - Respond using a strictly valid JSON array with double-quoted keys and values

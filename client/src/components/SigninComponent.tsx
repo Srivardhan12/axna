@@ -38,14 +38,14 @@ export function SigninComponent({
   useEffect(() => {
     if (!hasSubmitted) return
 
-    if (storedUser?.response || storedUser?.error || storedUser?.message) {
+    if (storedUser) {
       setIsLoading(false)
-
-      let errMsg = ""
-      if (typeof storedUser.response === "string") {
-        errMsg = storedUser.response
-      } else if (storedUser.error) {
-        errMsg = storedUser.error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let errMsg: any = ""
+      if (typeof storedUser === "string") {
+        errMsg = storedUser
+      } else if (storedUser) {
+        errMsg = storedUser
       } else {
         errMsg = "Login failed. Please try again."
       }

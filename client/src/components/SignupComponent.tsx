@@ -9,13 +9,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { SIGNUP } from "@/redux/auth-actions"
 
 export type state = {
-  user: {
-    status?: number
-    message?: string,
-    isSignup: boolean,
-    response?: string,
-    error?: string
-  },
+  isSignup: boolean,
+  user?: object | string,
 }
 
 export type signup = {
@@ -31,7 +26,7 @@ export function SignupComponent({
   const [isLoading, setIsLoading] = useState(false)
   const [hasSubmitted, setHasSubmitted] = useState(false)
   const navigate = useNavigate()
-  const storedUser = useSelector((state: state) => state.user)
+  const storedUser = useSelector((state: state) => state)
   const dispatch = useDispatch()
   const [user, setUser] = useState<signup>({})
 
@@ -40,14 +35,15 @@ export function SignupComponent({
   useEffect(() => {
     if (!hasSubmitted) return
 
-    if (storedUser && !storedUser.isSignup && storedUser.response) {
+    if (storedUser) {
       setIsLoading(false)
 
-      let errorMessage = ""
-      if (typeof storedUser.response === 'string') {
-        errorMessage = storedUser.response
-      } else if (storedUser.error) {
-        errorMessage = storedUser.error
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let errorMessage: any = ""
+      if (typeof storedUser.user === 'string') {
+        errorMessage = storedUser.user
+      } else if (!storedUser.isSignup) {
+        errorMessage = storedUser.user
       } else {
         errorMessage = "Signup failed. Please try again."
       }
@@ -56,9 +52,6 @@ export function SignupComponent({
         isError: true,
         message: errorMessage
       })
-    } else if (storedUser && storedUser.isSignup) {
-      setIsLoading(false)
-      setError({ isError: false, message: "" })
     }
   }, [storedUser, hasSubmitted])
 

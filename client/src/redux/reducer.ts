@@ -26,22 +26,22 @@ export const reducer = (state = initialState, action: action) => {
     case "SIGNIN":
       return {
         ...state,
-        user: action.payload?.response || null,
-        isSignup: action.payload?.isSignup ?? null,
+        user: action.payload?.response,
+        isSignup: action.payload?.isSignup,
         quiz: null
       };
 
     case "SET_PDF_FILE":
       return {
         ...state,
-        file: action.payload?.file || null,
+        file: action.payload?.file,
         quiz: null
       };
 
     case "SET_DIFFICULTY":
       return {
         ...state,
-        difficulty: action.payload?.difficulty || null,
+        difficulty: action.payload?.difficulty,
         quiz: null
       };
 
