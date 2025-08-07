@@ -3,17 +3,17 @@ import { QuizResult } from '../models/quiz.model';
 
 export const saveQuizResult = async (req: Request, res: Response) => {
     try {
-        console.log('Full request body:', JSON.stringify(req.body, null, 2));
-
         const { email, score, quizName, quizzes } = req.body;
 
-        const quizResult = new QuizResult({
+        const isPresent = await QuizResult.findOne({ quizName })
+        if (isPresent) return res.status(201).json({ message: "Quiz is already present" })
+
+        const quizResult = await QuizResult.create({
             email,
             score,
             quizName,
             quizzes
         });
-        await quizResult.save();
         res.status(201).json({
             message: 'Quiz saved successfully'
         });
