@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard"
 import GenerateQuiz from "./pages/GenerateQuiz"
 import Quiz from "./pages/Quiz"
 import Results from "./pages/Results"
+import InDelopment from "./pages/InDelopment"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route index element={<GenerateQuiz />} />
             <Route path="quiz" element={<Quiz />} />
             <Route path="results" element={<Results />} />
+            <Route path="underdev" element={<InDelopment />} />
           </Route >
         </Routes>
       </BrowserRouter>

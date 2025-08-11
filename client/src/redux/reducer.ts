@@ -6,6 +6,7 @@ const initialState = {
   quiz: null,
   loading: false,
   error: null,
+  quizName: ""
 };
 
 type action = {
@@ -17,6 +18,7 @@ type action = {
     difficulty?: string | null;
     quiz?: object;
     error?: string;
+    quizName?: string;
   };
 };
 
@@ -51,8 +53,8 @@ export const reducer = (state = initialState, action: action) => {
         loading: true,
         file: action.payload?.file,
         difficulty: action.payload?.difficulty,
-        quiz: null
-
+        quiz: null,
+        quizName: action.payload?.quizName
       };
 
     case "QUIZ_SUCCESS":
@@ -73,6 +75,12 @@ export const reducer = (state = initialState, action: action) => {
       return {
         ...state,
         userAnswers: action.payload
+      }
+
+    case "STORE_QUIZ":
+      return {
+        ...state,
+        quizStored: action.payload
       }
 
     case "LOGOUT":

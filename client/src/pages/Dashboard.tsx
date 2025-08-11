@@ -5,7 +5,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { Moon, Sun } from "lucide-react";
+import { Moon, SunDim } from "lucide-react";
 import { useEffect, useState } from "react"
 import { Outlet } from "react-router-dom";
 
@@ -35,7 +35,7 @@ export default function Page() {
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="mr-2 h-4" />
               <div className="relative flex items-center">
-                <p className="cursor-pointer" onClick={() => setDark(!dark)} >{dark ? <Sun size={20} /> : <Moon size={20} />}</p>
+                <p className="cursor-pointer" onClick={() => setDark(!dark)} >{dark ? <SunDim size={20} /> : <Moon size={17} />}</p>
               </div>
             </div>
           </header>

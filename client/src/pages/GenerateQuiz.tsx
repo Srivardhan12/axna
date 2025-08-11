@@ -13,11 +13,16 @@ export default function GenerateQuiz() {
 
   const [file, setFile] = useState<File | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
+  const [quizName, setQuizName] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const handleGenerate = () => {
     setError(null);
 
+    if (!quizName) {
+      setError("Please give a quiz name");
+      return;
+    }
     if (!file) {
       setError("Please upload a PDF file");
       return;
@@ -31,11 +36,14 @@ export default function GenerateQuiz() {
     formData.append("pdf", file);
     formData.append("difficulty", difficulty);
     //@ts-expect-error error
-    dispatch(GENERATE_QUIZ(formData, user.token, file, difficulty, navigate));
+    dispatch(GENERATE_QUIZ(formData, user.token, file, difficulty, quizName, navigate));
   };
 
   return (
     <div>
+      <form action="">
+        <input type="text" placeholder='quiz' className='w-full text-2xl my-4 outline-0 border-b-2' onChange={(e) => { setQuizName(e.target.value) }} />
+      </form>
       <PdfUpload onFileSelect={(f) => setFile(f)} />
       <div className='flex'>
         <Difficulty value={difficulty} onChange={(val) => setDifficulty(val)} />

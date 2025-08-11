@@ -16,13 +16,13 @@ export const SETDIFFICULTY = (difficulty: string) => {
   }
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const GENERATE_QUIZ = (formData: FormData, token: string, file: File, difficulty: string, navigate: NavigateFunction) => {
+
+export const GENERATE_QUIZ = (formData: FormData, token: string, file: File, difficulty: string, quizName: string, navigate: NavigateFunction) => {
   return async (dispatch: Dispatch) => {
     try {
       dispatch({
         type: "QUIZ_REQUEST", payload: {
-          file: file, difficulty: difficulty
+          file: file, difficulty: difficulty, quizName: quizName
         }
       });
       navigate("/dashboard/quiz")

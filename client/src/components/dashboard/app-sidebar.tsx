@@ -40,15 +40,15 @@ const data = {
             items: [
                 {
                     title: "Introduction",
-                    url: "#",
+                    url: "underdev",
                 },
                 {
                     title: "Get Started",
-                    url: "#",
+                    url: "underdev",
                 },
                 {
                     title: "Tutorials",
-                    url: "#",
+                    url: "underdev",
                 }
             ],
         },
@@ -60,11 +60,11 @@ const data = {
             items: [
                 {
                     title: "What is AXNA",
-                    url: "#",
+                    url: "underdev",
                 },
                 {
                     title: "How to use AXNA",
-                    url: "#",
+                    url: "underdev",
                 }
             ],
         },
@@ -75,11 +75,11 @@ const data = {
             items: [
                 {
                     title: "Gemini 2.5 flash",
-                    url: "#",
+                    url: "underdev",
                 },
                 {
                     title: "OpenRouter",
-                    url: "#",
+                    url: "underdev",
                 }
             ],
         }
@@ -117,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 {/* <NavProjects projects={data.projects} /> */}
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={user} />
+                {user ? <NavUser user={user} /> : null}
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

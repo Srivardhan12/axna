@@ -40,16 +40,14 @@ export function SigninComponent({
 
     if (storedUser) {
       setIsLoading(false)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let errMsg: any = ""
+      let errMsg: string = ""
       if (typeof storedUser === "string") {
         errMsg = storedUser
-      } else if (storedUser) {
-        errMsg = storedUser
+      } else if (typeof storedUser === "object") {
+        errMsg = storedUser.error || storedUser.message || JSON.stringify(storedUser)
       } else {
         errMsg = "Login failed. Please try again."
       }
-
       setError({ isError: true, message: errMsg })
     }
   }, [storedUser, hasSubmitted])

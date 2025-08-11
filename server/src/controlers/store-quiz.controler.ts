@@ -22,7 +22,8 @@ export const saveQuizResult = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: 'Error saving quiz',
-            error: error
+            // @ts-expect-error error has prop message
+            error: error.message
         });
     }
 };
