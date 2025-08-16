@@ -35,7 +35,6 @@ export default function Quiz() {
   }
 
   const handleSubmit = () => {
-    console.log("Submitted Answers:", userAnswers)
     dispatch(ANSWERS(userAnswers))
     navigate("/dashboard/results")
   }
@@ -58,6 +57,24 @@ export default function Quiz() {
     )
   }
 
+  if (!quiz || !Array.isArray(quiz) || quiz.length === 0) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Card className="w-96">
+          <CardContent className="flex flex-col items-center justify-center p-8">
+            <CardTitle className="text-xl mb-2">No Quiz Found</CardTitle>
+            <CardDescription className="text-center">
+              Sorry, we couldn't load your quiz. Please try again later.
+            </CardDescription>
+            <Button className="mt-4 cursor-pointer" onClick={() => navigate("/dashboard")}>
+              Go Back
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4">
       <Card className="shadow-lg border rounded-md p-4">
@@ -75,7 +92,7 @@ export default function Quiz() {
               <div key={key} className="flex items-center space-x-3">
                 <RadioGroupItem className="cursor-pointer" value={key} id={key} />
                 <Label htmlFor={key}>
-                  <span className="font-medium dark:text-gray-300 cursor-pointer">{key}:</span><span className="font-normal dark:text-gray-300 cursor-pointer">{value}</span>
+                  <span className="font-normal dark:text-gray-300 cursor-pointer">{value}</span>
                 </Label>
               </div>
             ))}

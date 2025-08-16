@@ -4,6 +4,8 @@ import { quizPrompt } from "../prompts/quiz-prompt";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 
+import JSON5 from "json5";
+
 dotenv.config()
 
 // Split the text into exactly 4 equal-sized chunks
@@ -32,7 +34,7 @@ async function callLLM(prompt: string) {
     contents: prompt
   });
   // @ts-expect-error need to check for later
-  return JSON.parse(response.text);
+  return JSON5.parse(response.text)
 }
 
 export const quiz = async (req: Request, res: Response) => {
